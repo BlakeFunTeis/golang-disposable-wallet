@@ -11,4 +11,4 @@
 * API Interface: Provide a standard API interface that allows developers to use wallet functions.
 * Security Management: Protect wallet private keys by implementing access control, log recording, auditing, and other measures.
 * Multi-asset support: Support multiple digital assets, such as Ethereum, TRON, Solana, and others.
-* User Identity Verification: Allow users to access the wallet management system using authentication methods such as usernames, passwords, OAuth, etc.
+* User Identity Verification: Allow users to access the wallet management system using authentication methods such as usernames, passwords
