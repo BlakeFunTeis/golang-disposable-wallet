@@ -1,7 +1,9 @@
 package Solana
 
 import (
+	"context"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/portto/solana-go-sdk/rpc"
 	"github.com/portto/solana-go-sdk/types"
 )
 
@@ -16,7 +18,15 @@ func (swm *SolWalletManager) CreateWallet() (_address string, _privateKey string
 }
 
 func (swm *SolWalletManager) GetBalance(_address string) (balance float64, err error) {
-	return 0.0, nil
+	client := rpc.NewRpcClient(rpc.MainnetRPCEndpoint)
+	json, err := client.GetBalance(context.Background(), _address)
+
+	if err != nil {
+		return 0.0, err
+	}
+
+	balance = float64(json.Result.Value) / 1000000000
+	return balance, nil
 }
 
 func (swm *SolWalletManager) SendTransaction(_fromAddress string, _toAddress string, _amount float64) (txHash string, err error) {
