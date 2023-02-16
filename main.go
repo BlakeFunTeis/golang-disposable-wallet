@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	_ "github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
 	"golang-disposable-wallet/blockchain"
 	"golang-disposable-wallet/blockchain/Ethereum"
 	"golang-disposable-wallet/blockchain/Tron"
