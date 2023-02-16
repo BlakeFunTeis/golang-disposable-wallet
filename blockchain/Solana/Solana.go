@@ -1,9 +1,18 @@
 package Solana
 
+import (
+	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/portto/solana-go-sdk/types"
+)
+
 type SolWalletManager struct{}
 
 func (swm *SolWalletManager) CreateWallet() (_address string, _privateKey string, _err error) {
-	return "", "", nil
+	account := types.NewAccount()
+	privateKeyBytes := account.PrivateKey
+	privateKey := hexutil.Encode(privateKeyBytes)
+	publicKey := account.PublicKey.ToBase58()
+	return publicKey, privateKey, nil
 }
 
 func (swm *SolWalletManager) GetBalance(_address string) (balance float64, err error) {
