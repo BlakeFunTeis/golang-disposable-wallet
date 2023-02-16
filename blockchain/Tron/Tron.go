@@ -1,10 +1,10 @@
 package Tron
 
 import (
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
-	"fmt"
 	"github.com/btcsuite/btcutil/base58"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -19,41 +19,46 @@ type Address [AddressLength]byte
 
 type TronWalletManager struct{}
 
-func (twm *TronWalletManager) CreateWallet() (_address string, _privateKey string, _err error) {
+func (twm *TronWalletManager) CreateWallet() (string, string, error) {
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
-		fmt.Println(err)
-		return
+		return "", "", err
 	}
 
-	address := crypto.PubkeyToAddress(privateKey.PublicKey)
-	fmt.Printf("Address: %s\n", address)
-	tronAddress, err := addressLedgerToTron(address.Bytes())
+	address, err := getTronAddress(&privateKey.PublicKey)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return "", "", err
 	}
 
 	privateKeyHex := hex.EncodeToString(crypto.FromECDSA(privateKey))
-	tronAddressString, err := encode58Check(tronAddress.Bytes())
+	tronAddressString, err := encode58Check(address.Bytes())
 	if err != nil {
-		fmt.Println(err)
-		return
+		return "", "", err
 	}
 
 	return tronAddressString, privateKeyHex, nil
 }
 
-func (twm *TronWalletManager) GetBalance(_address string) (balance float64, err error) {
+func (twm *TronWalletManager) GetBalance(address string) (float64, error) {
 	return 0.0, nil
 }
 
-func (twm *TronWalletManager) SendTransaction(_fromAddress string, _toAddress string, _amount float64) (txHash string, err error) {
+func (twm *TronWalletManager) SendTransaction(fromAddress string, toAddress string, amount float64) (string, error) {
 	return "", nil
 }
 
-func (twm *TronWalletManager) DestroyWallet(_address string) (err error) {
+func (twm *TronWalletManager) DestroyWallet(address string) error {
 	return nil
+}
+
+func getTronAddress(publicKey *ecdsa.PublicKey) (Address, error) {
+	address := crypto.PubkeyToAddress(*publicKey)
+	tronAddress, err := addressLedgerToTron(address.Bytes())
+	if err != nil {
+		return Address{}, err
+	}
+
+	return tronAddress, nil
 }
 
 func addressLedgerToTron(ledgerAddress []byte) (Address, error) {
