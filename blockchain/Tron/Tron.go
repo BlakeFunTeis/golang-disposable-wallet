@@ -39,20 +39,20 @@ func (twm *TronWalletManager) CreateWallet() (string, string, error) {
 	return tronAddressString, privateKeyHex, nil
 }
 
-func (twm *TronWalletManager) GetBalance(address string) (float64, error) {
+func (twm *TronWalletManager) GetBalance(_address string) (float64, error) {
 	return 0.0, nil
 }
 
-func (twm *TronWalletManager) SendTransaction(fromAddress string, toAddress string, amount float64) (string, error) {
+func (twm *TronWalletManager) SendTransaction(_fromAddress string, _toAddress string, _amount float64) (string, error) {
 	return "", nil
 }
 
-func (twm *TronWalletManager) DestroyWallet(address string) error {
+func (twm *TronWalletManager) DestroyWallet(_address string) error {
 	return nil
 }
 
-func getTronAddress(publicKey *ecdsa.PublicKey) (Address, error) {
-	address := crypto.PubkeyToAddress(*publicKey)
+func getTronAddress(_publicKey *ecdsa.PublicKey) (Address, error) {
+	address := crypto.PubkeyToAddress(*_publicKey)
 	tronAddress, err := addressLedgerToTron(address.Bytes())
 	if err != nil {
 		return Address{}, err
@@ -61,8 +61,8 @@ func getTronAddress(publicKey *ecdsa.PublicKey) (Address, error) {
 	return tronAddress, nil
 }
 
-func addressLedgerToTron(ledgerAddress []byte) (Address, error) {
-	addr := ethCommon.BytesToAddress(crypto.Keccak256(ledgerAddress[1:])[12:])
+func addressLedgerToTron(_ledgerAddress []byte) (Address, error) {
+	addr := ethCommon.BytesToAddress(crypto.Keccak256(_ledgerAddress[1:])[12:])
 	addressTron := make([]byte, AddressLength)
 	addressPrefix, err := FromHex(AddressPrefix)
 	if err != nil {
@@ -73,33 +73,33 @@ func addressLedgerToTron(ledgerAddress []byte) (Address, error) {
 	return BytesToAddress(addressTron), nil
 }
 
-func FromHex(input string) ([]byte, error) {
-	if len(input) == 0 {
+func FromHex(_input string) ([]byte, error) {
+	if len(_input) == 0 {
 		return nil, errors.New("empty hex string")
 	}
 
-	return hex.DecodeString(input[:])
+	return hex.DecodeString(_input[:])
 }
 
-func BytesToAddress(b []byte) Address {
+func BytesToAddress(_byte []byte) Address {
 	var a Address
-	a.SetBytes(b)
+	a.SetBytes(_byte)
 	return a
 }
 
-func (a *Address) SetBytes(b []byte) {
-	if len(b) > len(a) {
-		b = b[len(b)-AddressLength:]
+func (a *Address) SetBytes(_byte []byte) {
+	if len(_byte) > len(a) {
+		_byte = _byte[len(_byte)-AddressLength:]
 	}
-	copy(a[AddressLength-len(b):], b)
+	copy(a[AddressLength-len(_byte):], _byte)
 }
 
 func (a *Address) Bytes() []byte {
 	return a[:]
 }
 
-func encode58Check(input []byte) (string, error) {
-	h0, err := Hash(input)
+func encode58Check(_input []byte) (string, error) {
+	h0, err := Hash(_input)
 	if err != nil {
 		return "", err
 	}
@@ -110,14 +110,14 @@ func encode58Check(input []byte) (string, error) {
 	if len(h1) < 4 {
 		return "", errors.New("base58 encode length error")
 	}
-	inputCheck := append(input, h1[:4]...)
+	inputCheck := append(_input, h1[:4]...)
 
 	return base58.Encode(inputCheck), nil
 }
 
-func Hash(s []byte) ([]byte, error) {
+func Hash(_byte []byte) ([]byte, error) {
 	h := sha256.New()
-	_, err := h.Write(s)
+	_, err := h.Write(_byte)
 	if err != nil {
 		return nil, err
 	}

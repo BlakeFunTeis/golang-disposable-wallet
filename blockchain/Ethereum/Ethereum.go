@@ -11,7 +11,7 @@ import (
 
 type EthWalletManager struct{}
 
-func (ewm *EthWalletManager) CreateWallet() (_address string, _privateKey string, _err error) {
+func (ewm *EthWalletManager) CreateWallet() (ethAddress string, ethPrivateKey string, err error) {
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
 		panic(err)
@@ -48,7 +48,7 @@ func (ewm *EthWalletManager) DestroyWallet(_address string) (err error) {
 	return nil
 }
 
-func toEther(_wei int64) (_ether float64) {
-	_ether = float64(_wei) / 1000000000000000000
-	return _ether
+func toEther(_wei int64) (ether float64) {
+	ether = float64(_wei) / 1000000000000000000
+	return ether
 }
