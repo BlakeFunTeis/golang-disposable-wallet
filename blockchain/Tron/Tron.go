@@ -1,6 +1,7 @@
 package Tron
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/hex"
@@ -8,6 +9,8 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	ethCommon "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+	protocol_api "github.com/tron-us/go-btfs-common/protos/protocol/api"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -20,23 +23,20 @@ type Address [AddressLength]byte
 type TronWalletManager struct{}
 
 func (twm *TronWalletManager) CreateWallet() (string, string, error) {
-	privateKey, err := crypto.GenerateKey()
+	conn, err := grpc.Dial("grpc.trongrid.io:50051", grpc.WithInsecure())
 	if err != nil {
 		return "", "", err
 	}
 
-	address, err := getTronAddress(&privateKey.PublicKey)
+	defer conn.Close()
+	client := protocol_api.NewWalletClient(conn)
+	ctx := context.Background()
 	if err != nil {
 		return "", "", err
 	}
+	resp, err := client.GenerateAddress(ctx, &protocol_api.EmptyMessage{})
 
-	privateKeyHex := hex.EncodeToString(crypto.FromECDSA(privateKey))
-	tronAddressString, err := encode58Check(address.Bytes())
-	if err != nil {
-		return "", "", err
-	}
-
-	return tronAddressString, privateKeyHex, nil
+	return resp.GetAddress(), resp.GetPrivateKey(), nil
 }
 
 func (twm *TronWalletManager) GetBalance(_address string) (float64, error) {
