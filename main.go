@@ -56,7 +56,7 @@ func main() {
 }
 
 func getMode() string {
-	var mode = os.Getenv("app_env")
+	var mode = os.Getenv("APP_ENV")
 	switch strings.ToLower(mode) {
 	case "debug":
 		return gin.DebugMode
